@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "testwork10"
+version = "0.1.0"
+description = ""
+authors = ["Aziza <azizamukashkyzy@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.12"
+uvicorn = {extras = ["standard"], version = "^0.34.2"}
+sqlalchemy = "^2.0.40"
+psycopg2 = "^2.9.10"
+black = "^25.1.0"
+alembic = "^1.15.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
