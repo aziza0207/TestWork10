@@ -1,4 +1,5 @@
 from __future__ import annotations
+from sqlalchemy import select
 from datetime import timedelta
 from typing import Annotated
 from starlette import status
@@ -21,6 +22,11 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 async def create_user(
     user: schemas.UserCreate, session: Session = Depends(get_db_session)
 ):
+
+    db_user = session.scalar(select(User).where(User.email == user.email))
+    if db_user:
+        raise HTTPException(status_code=400, detail="User already exists")
+
     user = User.create_user(session=session, user=user)
 
     tokens = AuthService.create_token_pair(email=user.email, user_id=user.id)
