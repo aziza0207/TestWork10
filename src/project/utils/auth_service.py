@@ -1,20 +1,27 @@
 from __future__ import annotations
+
+import os
+from dotenv import load_dotenv
+
+from typing import  Dict, Any
+
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
-from typing import Annotated, Dict, Any
-from sqlalchemy import Integer, String, select
-from sqlalchemy.orm import Mapped, MappedAsDataclass, mapped_column, relationship
-from fastapi import Depends, HTTPException
+from sqlalchemy import  select
+
+from fastapi import  HTTPException
 from starlette import status
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import  OAuth2PasswordBearer
 from jose import jwt, JWTError
-from ..database import Base
-from .. import schemas
+
 from ..models import User
 
-SECRET_KEY = "197b2c37c391bed93fe80344fe73b806947a65e36206e05a1a23c2fa12702fe3"
-ALGORITHM = "HS256"
+
+load_dotenv()  # take environment variables from .env.
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="auth/token")
