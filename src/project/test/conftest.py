@@ -66,7 +66,6 @@ def auth_header(client, user):
     return {"Authorization": f"Bearer {token}"}
 
 
-
 @pytest.fixture()
 def service(db_session, user):
     new_service = Service(
@@ -76,7 +75,6 @@ def service(db_session, user):
         status=ServiceStatus.PENDING,
         description="A test service.",
         priority=1,
-
     )
 
     db_session.add(new_service)

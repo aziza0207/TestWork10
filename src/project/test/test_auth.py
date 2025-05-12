@@ -8,7 +8,7 @@ def test_register(db_session, client):
     payload = {"name": "Test Name", "email": "test@example.com", "password": "test123"}
 
     response = client.post("/auth/register/", json=payload)
-    assert response.status_code ==status.HTTP_201_CREATED
+    assert response.status_code == status.HTTP_201_CREATED
 
     data = response.json()
     assert "access_token" in data
@@ -25,6 +25,16 @@ def test_register(db_session, client):
             session.delete(db_user)
             session.commit()
         session.close()
+
+
+def test_user_already_exists(db_session, client, user):
+    payload = {
+        "name": user.name,
+        "email": user.email,
+        "password": "TestPassword",
+    }
+    response = client.post("/auth/register/", json=payload)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
 def test_login(user, client):
