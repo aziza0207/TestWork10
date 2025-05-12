@@ -24,7 +24,7 @@ class User(MappedAsDataclass, Base, unsafe_hash=True):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, init=False, primary_key=True)
-    email: Mapped[str | None] = mapped_column(String, nullable=True, default=None)
+    email: Mapped[str | None] = mapped_column(String, nullable=True, default=None, unique=True)
     name: Mapped[str | None] = mapped_column(String, nullable=True, default=None)
     password: Mapped[str | None] = mapped_column(
         String(255), nullable=True, default=None
@@ -72,16 +72,7 @@ class User(MappedAsDataclass, Base, unsafe_hash=True):
 
 
 
-    # @staticmethod
-    # def create_access_token(email: str, user_id: int, expires_delta: timedelta):
-    #     to_encode = {"sub": email, "id": user_id}
-    #     if expires_delta:
-    #         expire = datetime.now(timezone.utc) + expires_delta
-    #     else:
-    #         expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-    #     to_encode.update({"exp": expire})
-    #     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    #     return encoded_jwt
+
 
     @staticmethod
     def verify_password(password, hashed_password):

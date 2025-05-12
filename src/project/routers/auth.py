@@ -27,7 +27,18 @@ async def create_user(
     user = User.create_user(session=session, user=user)
 
     tokens = User.create_token_pair(email=user.email, user_id=user.id)
-    return {"user": schemas.UserRead.model_validate(user), **tokens}
+    user_data = schemas.UserRead(
+        id=user.id,
+        email=user.email,
+        name=user.name
+
+    )
+
+    return schemas.AuthResponse(
+        user=user_data,
+        access_token=tokens["access_token"],
+        refresh_token=tokens["refresh_token"],
+    )
 
 
 @router.post("/token")
