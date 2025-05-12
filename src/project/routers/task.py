@@ -20,13 +20,17 @@ async def get_tasks(
     session: Session = Depends(get_db_session),
     user: dict = Depends(User.get_current_user),
 ):
+    try:
 
-    db_user = session.scalar(select(User).where(User.id == user["id"]))
-    if not db_user:
-        raise HTTPException(status_code=404, detail="Authentication Failed")
+        db_user = session.scalar(select(User).where(User.id == user["id"]))
+        if not db_user:
+            raise HTTPException(status_code=404, detail="Authentication Failed")
 
-    services = Service.get_all(session, user["id"])
-    return services
+        services = Service.get_all(session, user["id"])
+        return services
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
 @router.patch(
@@ -108,15 +112,19 @@ async def search_tasks(
     user: dict = Depends(User.get_current_user),
     q: Optional[str] = Query(None, min_length=1),
 ):
+    try:
 
-    db_user = session.scalar(select(User).where(User.id == user["id"]))
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
+        db_user = session.scalar(select(User).where(User.id == user["id"]))
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
 
-    stmt = select(Service).where(Service.owner_id == db_user.id)
+        stmt = select(Service).where(Service.owner_id == db_user.id)
 
-    if q:
-        stmt = stmt.where(Service.title.ilike(f"%{q}%"))
+        if q:
+            stmt = stmt.where(Service.title.ilike(f"%{q}%"))
 
-    results = session.scalars(stmt).all()
-    return results
+        results = session.scalars(stmt).all()
+        return results
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -7,7 +7,6 @@ from .database import engine
 from sqlalchemy import exc
 
 
-
 def get_db_session() -> Generator[Session, None, None]:
     factory = sessionmaker(engine)
     with factory() as session:
@@ -22,6 +21,3 @@ def get_db_session() -> Generator[Session, None, None]:
             raise error
         finally:
             session.close()
-
-
-

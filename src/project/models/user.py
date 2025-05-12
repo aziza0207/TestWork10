@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
-from typing import Annotated
+from typing import Annotated, Dict, Any
 from sqlalchemy import Integer, String, select
 from sqlalchemy.orm import Mapped, MappedAsDataclass, mapped_column, relationship
 from fastapi import Depends, HTTPException
@@ -24,7 +24,9 @@ class User(MappedAsDataclass, Base, unsafe_hash=True):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, init=False, primary_key=True)
-    email: Mapped[str | None] = mapped_column(String, nullable=True, default=None, unique=True)
+    email: Mapped[str | None] = mapped_column(
+        String, nullable=True, default=None, unique=True
+    )
     name: Mapped[str | None] = mapped_column(String, nullable=True, default=None)
     password: Mapped[str | None] = mapped_column(
         String(255), nullable=True, default=None
@@ -46,48 +48,6 @@ class User(MappedAsDataclass, Base, unsafe_hash=True):
         return f"<User(id={self.id}, email={self.name})>"
 
     @staticmethod
-    def create_token(email: str, user_id: int, expires_delta: timedelta, token_type: str) -> str:
-        expire = datetime.now(timezone.utc) + expires_delta
-        payload = {
-            "sub": email,
-            "id": user_id,
-            "type": token_type,
-            "exp": expire
-        }
-        return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-    @staticmethod
-    def create_token_pair(email: str, user_id: int):
-        access_token_expires = timedelta(minutes=15)
-        refresh_token_expires = timedelta(days=7)
-
-        access_token = User.create_token(email, user_id, access_token_expires, token_type="access")
-        refresh_token = User.create_token(email, user_id, refresh_token_expires, token_type="refresh")
-
-        return {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer"
-        }
-
-
-
-
-
-    @staticmethod
-    def verify_password(password, hashed_password):
-        return bcrypt_context.verify(password, hashed_password)
-
-    @staticmethod
-    def authenticate_user(email: str, password: str, session: Session) -> User | bool:
-        user = session.scalar(select(User).where(User.email == email))
-        if not user:
-            return False
-        if not User.verify_password(password, user.password):
-            return False
-        return user
-
-    @staticmethod
     async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
 
         credentials_exception = HTTPException(
@@ -104,10 +64,3 @@ class User(MappedAsDataclass, Base, unsafe_hash=True):
             return {"email": email, "id": user_id}
         except JWTError:
             raise credentials_exception
-
-
-
-
-
-
-

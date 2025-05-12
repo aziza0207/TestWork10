@@ -13,7 +13,6 @@ class ServiceBase(BaseModel):
         from_attributes = True
 
 
-
 class ServiceUpdate(BaseModel):
     title: Optional[str] = Field(default=None)
     description: Optional[str] = Field(default=None)
@@ -24,7 +23,5 @@ class ServiceUpdate(BaseModel):
         from_attributes = True
 
 
-
 class ServiceList(ServiceBase):
     id: int = Field()
-
