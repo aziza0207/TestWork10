@@ -1,8 +1,12 @@
 import os
 from collections.abc import Generator
+from fastapi import Depends
+from typing import Annotated
 from sqlalchemy.orm import Session, sessionmaker
 from .database import engine
 from sqlalchemy import exc
+
+
 
 def get_db_session() -> Generator[Session, None, None]:
     factory = sessionmaker(engine)
@@ -18,3 +22,6 @@ def get_db_session() -> Generator[Session, None, None]:
             raise error
         finally:
             session.close()
+
+
+
